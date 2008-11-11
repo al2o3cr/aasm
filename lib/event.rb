@@ -12,6 +12,11 @@ module AASM
         instance_eval(&block) if block
       end
 
+      def update(options = {}, &block)
+        @success ||= options[:success]
+        instance_eval(&block) if block
+      end
+
       def fire(obj, to_state=nil, *args)
         transitions = @transitions.select { |t| t.from == obj.aasm_current_state }
         raise AASM::InvalidTransition, "Event '#{name}' cannot transition from '#{obj.aasm_current_state}'" if transitions.size == 0
@@ -48,6 +53,12 @@ module AASM
         Array(trans_opts[:from]).each do |s|
           @transitions << SupportingClasses::StateTransition.new(trans_opts.merge({:from => s.to_sym}))
         end
+      end
+
+      def no_transitions(trans_opts)
+        from = Array(trans_opts[:from])
+        to = Array(trans_opts[:to])
+        @transitions.delete_if { |t| from.include?(t.from) && to.include?(t.to) }
       end
     end
   end

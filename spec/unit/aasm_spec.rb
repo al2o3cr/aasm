@@ -86,6 +86,11 @@ describe AASM, '- subclassing' do
     child = Class.new(@parent)
     child.aasm_states.equal?(@parent.aasm_states).should be_false
   end
+  
+  it 'should have a unique events hash' do
+    child = Class.new(@parent)
+    child.aasm_events.equal?(@parent.aasm_events).should be_false
+  end
 end
 
 

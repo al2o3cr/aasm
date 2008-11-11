@@ -27,6 +27,23 @@ describe AASM::SupportingClasses::Event do
     AASM::SupportingClasses::StateTransition.should_receive(:new).with({:to => :closed, :from => :received})
     new_event
   end
+
+  it 'should allow StateTransitions to be added' do
+    new_event
+    AASM::SupportingClasses::StateTransition.should_receive(:new).with({:to => :closed, :from => :sent})
+    @event.update do
+      transitions :to => :closed, :from => :sent
+    end
+  end
+
+  it 'should allow StateTransitions to be deleted' do
+    new_event
+    @event.update do
+      no_transitions :to => :closed, :from => :open
+    end
+    @event.transitions_from_state?(:open).should == false
+  end
+
 end
 
 describe AASM::SupportingClasses::Event, 'when firing an event' do

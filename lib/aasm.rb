@@ -51,7 +51,9 @@ module AASM
     def aasm_event(name, options = {}, &block)
       sm = AASM::StateMachine[self]
       
-      unless sm.events.has_key?(name)
+      if sm.events.has_key?(name)
+        sm.events[name].update(options, &block)
+      else
         sm.events[name] = AASM::SupportingClasses::Event.new(name, options, &block)
       end
 
